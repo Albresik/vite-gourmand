@@ -12,7 +12,8 @@ Cette checklist décrit le périmètre minimal à livrer. Les éléments marqué
 - [x] Création de compte avec validation du mot de passe.
 - [x] Connexion avec mots de passe hachés.
 - [ ] Réinitialisation du mot de passe.
-- [ ] Page de contact avec enregistrement/simulation d’envoi du message.
+- [x] Page de contact avec enregistrement en base.
+- [ ] Envoi d’un e-mail de contact à l’entreprise (configuration SMTP à prévoir).
 
 ## Commandes et espace utilisateur
 

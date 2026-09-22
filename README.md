@@ -12,6 +12,8 @@ Après le premier import, importer aussi `database/upgrade_auth.sql` afin d’aj
 
 Puis importer `database/upgrade_orders.sql` pour enregistrer les commandes et leur historique de statut.
 
+Importer `database/upgrade_contact.sql` pour activer le formulaire de contact.
+
 ## Compétences mises en œuvre
 
 - Catalogue de menus alimenté par MySQL.
