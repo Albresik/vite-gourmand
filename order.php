@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                  distance_km, menu_total, discount_amount, delivery_fee, total_amount, status)
                 VALUES
                 (:user_id, :menu_id, :quantity, :delivery_address, :delivery_date, :delivery_time,
-                 :distance_km, :menu_total, :discount_amount, :delivery_fee, :total_amount, "pending")'
+                 :distance_km, :menu_total, :discount_amount, :delivery_fee, :total_amount, :status)'
             );
             $insert->execute([
                 'user_id' => $user['id'], 'menu_id' => $menu['id'], 'quantity' => $quantity,
@@ -77,11 +77,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'delivery_time' => $data['delivery_time'],
                 'distance_km' => $distance, 'menu_total' => $menuTotal,
                 'discount_amount' => $discount, 'delivery_fee' => $delivery,
-                'total_amount' => $total,
+                'total_amount' => $total, 'status' => 'pending',
             ]);
             $orderId = database()->lastInsertId();
-            $history = database()->prepare('INSERT INTO order_status_history (order_id, status) VALUES (:order_id, "pending")');
-            $history->execute(['order_id' => $orderId]);
+            $history = database()->prepare('INSERT INTO order_status_history (order_id, status) VALUES (:order_id, :status)');
+            $history->execute(['order_id' => $orderId, 'status' => 'pending']);
             database()->commit();
             header('Location: order-success.php?id=' . $orderId);
             exit;

@@ -31,15 +31,16 @@ Cette checklist décrit le périmètre minimal à livrer. Les éléments marqué
 
 - [ ] Contrôle des rôles utilisateur / employé / administrateur (codé, test à faire).
 - [ ] Employé : gestion des menus, plats, images et commandes (codée, tests manuels à faire).
+- [ ] Employé : modification des commandes après contact client (codée, test manuel à faire).
 - [ ] Employé : validation/refus des avis (codés, test manuel à faire).
 - [ ] Employé : modification des horaires (codée, test manuel à faire).
 - [ ] Administrateur : création et désactivation d’un compte employé (codées, test à faire).
-- [ ] Administrateur : tableau de bord et chiffre d’affaires filtrable.
+- [ ] Administrateur : tableau de bord MongoDB et chiffre d’affaires filtrable (codés, Atlas et test en ligne à faire).
 
 ## Données, sécurité et accessibilité
 
 - [x] MySQL : utilisateurs, menus, plats, allergènes, images, commandes et historique des statuts.
-- [ ] MongoDB : événements/statistiques de commande.
+- [ ] MongoDB : copie anonymisée des commandes pour les statistiques (codée, connexion Atlas à faire).
 - [x] PDO et requêtes préparées.
 - [x] Hachage des mots de passe et sessions.
 - [ ] Validation serveur sur les autres formulaires.

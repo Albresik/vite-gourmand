@@ -1,0 +1,11 @@
+{
+  "name": "valentin/vite-gourmand",
+  "description": "Application PHP de démonstration pour le traiteur Vite & Gourmand",
+  "type": "project",
+  "require": {
+    "php": "^8.2",
+    "ext-pdo_mysql": "*",
+    "ext-mongodb": "^2.0",
+    "mongodb/mongodb": "^2.0"
+  }
+}

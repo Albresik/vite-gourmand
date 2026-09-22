@@ -16,22 +16,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!passwordIsValid($password)) $errors[] = 'Le mot de passe doit avoir 10 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.';
         if (!$errors) {
             try {
-                $request = database()->prepare('INSERT INTO users (first_name, last_name, email, phone, address, password_hash, role) VALUES (:first_name, :last_name, :email, "", "", :password_hash, "employee")');
-                $request->execute(['first_name' => $firstName, 'last_name' => $lastName, 'email' => $email, 'password_hash' => password_hash($password, PASSWORD_DEFAULT)]);
+                $request = database()->prepare('INSERT INTO users (first_name, last_name, email, phone, address, password_hash, role) VALUES (:first_name, :last_name, :email, :phone, :address, :password_hash, :role)');
+                $request->execute(['first_name' => $firstName, 'last_name' => $lastName, 'email' => $email, 'phone' => '', 'address' => '', 'password_hash' => password_hash($password, PASSWORD_DEFAULT), 'role' => 'employee']);
                 header('Location: admin.php?created=1'); exit;
             } catch (PDOException $error) { $errors[] = 'Impossible de créer ce compte. L’e-mail est peut-être déjà utilisé.'; }
         }
     } elseif ($action === 'toggle') {
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
         if ($id) {
-            $request = database()->prepare('UPDATE users SET is_active = 1 - is_active WHERE id = :id AND role = "employee"');
-            $request->execute(['id' => $id]);
+            $request = database()->prepare('UPDATE users SET is_active = 1 - is_active WHERE id = :id AND role = :role');
+            $request->execute(['id' => $id, 'role' => 'employee']);
             header('Location: admin.php?updated=1'); exit;
         }
     }
 }
 
-$employees = database()->query('SELECT id, first_name, last_name, email, is_active FROM users WHERE role = "employee" ORDER BY id DESC')->fetchAll();
+$employeeQuery = database()->prepare('SELECT id, first_name, last_name, email, is_active FROM users WHERE role = :role ORDER BY id DESC');
+$employeeQuery->execute(['role' => 'employee']);
+$employees = $employeeQuery->fetchAll();
 pageHeader('Administration');
 ?>
 <main id="contenu" class="container py-5">
@@ -55,6 +57,6 @@ pageHeader('Administration');
       <?php foreach ($employees as $employee): ?><div class="order-panel mb-2"><strong><?= htmlspecialchars($employee['first_name'] . ' ' . $employee['last_name']) ?></strong><p class="mb-2"><?= htmlspecialchars($employee['email']) ?> · <?= $employee['is_active'] ? 'Actif' : 'Désactivé' ?></p><form method="post"><input type="hidden" name="csrf_token" value="<?= csrfToken() ?>"><input type="hidden" name="action" value="toggle"><input type="hidden" name="id" value="<?= (int)$employee['id'] ?>"><button class="btn btn-sm btn-outline-dark" type="submit"><?= $employee['is_active'] ? 'Désactiver' : 'Réactiver' ?></button></form></div><?php endforeach; ?>
     </section>
   </div>
-  <section class="order-panel mt-4"><h2 class="h4">Statistiques</h2><p class="mb-0">Le graphique des commandes et le chiffre d’affaires seront ajoutés après la connexion à MongoDB.</p></section>
+  <section class="order-panel mt-4"><h2 class="h4">Statistiques</h2><p>Compare le nombre de commandes par menu et leur chiffre d’affaires.</p><a class="btn btn-outline-dark" href="admin-stats.php">Voir le tableau de bord</a></section>
 </main>
 <?php pageFooter(); ?>

@@ -2,6 +2,8 @@
 .env
 .env.*
 config/database.local.php
+*.pem
+*.crt
 
 # Dépendances et fichiers temporaires
 /vendor/

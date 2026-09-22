@@ -11,20 +11,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$reviewId || !in_array($decision, ['approved', 'rejected'], true)) {
         $error = 'Décision invalide.';
     } else {
-        $update = database()->prepare('UPDATE reviews SET status = :status WHERE id = :id AND status = "pending"');
-        $update->execute(['status' => $decision, 'id' => $reviewId]);
+        $update = database()->prepare('UPDATE reviews SET status = :status WHERE id = :id AND status = :pending');
+        $update->execute(['status' => $decision, 'id' => $reviewId, 'pending' => 'pending']);
         if ($update->rowCount() === 1) { header('Location: employee-reviews.php?updated=1'); exit; }
         $error = 'Cet avis a déjà été traité.';
     }
 }
 
-$reviews = database()->query(
+$reviewQuery = database()->prepare(
     'SELECT r.id, r.rating, r.comment, r.created_at, o.id AS order_id, m.title
      FROM reviews r
      JOIN customer_orders o ON o.id = r.order_id
      JOIN menus m ON m.id = o.menu_id
-     WHERE r.status = "pending" ORDER BY r.created_at ASC'
-)->fetchAll();
+     WHERE r.status = :status ORDER BY r.created_at ASC'
+);
+$reviewQuery->execute(['status' => 'pending']);
+$reviews = $reviewQuery->fetchAll();
 pageHeader('Modération des avis');
 ?>
 <main id="contenu" class="container py-5">

@@ -1,0 +1,10 @@
+Options -Indexes
+RewriteEngine On
+
+# Ces fichiers servent au serveur, pas aux visiteurs.
+RewriteRule (^|/)\. - [F,L]
+RewriteRule ^(config|database|docs|includes|scripts|vendor)(/|$) - [F,L,NC]
+
+<FilesMatch "^(composer\.(json|lock)|Procfile|README\.md)$">
+    Require all denied
+</FilesMatch>

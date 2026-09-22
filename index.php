@@ -1,7 +1,9 @@
 <?php
 require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/layout.php';
-$reviews = database()->query('SELECT rating, comment FROM reviews WHERE status = "approved" ORDER BY id DESC LIMIT 3')->fetchAll();
+$reviewQuery = database()->prepare('SELECT rating, comment FROM reviews WHERE status = :status ORDER BY id DESC LIMIT 3');
+$reviewQuery->execute(['status' => 'approved']);
+$reviews = $reviewQuery->fetchAll();
 pageHeader('Accueil');
 ?>
 <main id="contenu">

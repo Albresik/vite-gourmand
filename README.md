@@ -22,6 +22,8 @@ Importer ensuite `database/upgrade_reviews.sql` pour activer les avis clients li
 
 Importer enfin `database/upgrade_hours.sql` pour afficher les horaires du lundi au dimanche dans le pied de page. Les horaires fournis sont des exemples et se modifient depuis l’espace employé.
 
+Importer `database/upgrade_order_contacts.sql` pour conserver la trace du moyen de contact et du motif quand l’équipe modifie ou annule une commande.
+
 ## Compétences mises en œuvre
 
 - Catalogue de menus alimenté par MySQL.
@@ -29,3 +31,8 @@ Importer enfin `database/upgrade_hours.sql` pour afficher les horaires du lundi 
 - Requêtes préparées PDO.
 - Structure HTML sémantique et interface responsive Bootstrap.
 - Modèle relationnel avec tables de liaison pour les plats et leurs allergènes (voir `docs/SCHEMA_RELATIONNEL.md`).
+- Tableau de bord administratif préparé pour MongoDB Atlas (l'extension PHP MongoDB et `MONGODB_URI` sont nécessaires pour le tester).
+
+## Mise en ligne
+
+Le déploiement gratuit envisagé utilise Render (site PHP), Aiven Free (MySQL) et MongoDB Atlas Free (statistiques). Le `Dockerfile` prépare PHP pour Render ; la procédure et ses limites sont dans `docs/DEPLOIEMENT_GRATUIT.md`. Aucun identifiant ne doit être ajouté au dépôt.

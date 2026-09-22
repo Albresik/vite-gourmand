@@ -1,0 +1,9 @@
+.git
+.github
+vendor
+.env
+*.pem
+*.crt
+work
+outputs
+*.log

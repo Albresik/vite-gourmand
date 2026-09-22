@@ -28,8 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'Cette commande ne peut plus être annulée depuis votre espace.';
                 database()->rollBack();
             } else {
-                database()->prepare('UPDATE customer_orders SET status = "cancelled" WHERE id = :id')->execute(['id' => $orderId]);
-                database()->prepare('INSERT INTO order_status_history (order_id, status) VALUES (:id, "cancelled")')->execute(['id' => $orderId]);
+                database()->prepare('UPDATE customer_orders SET status = :status WHERE id = :id')->execute(['status' => 'cancelled', 'id' => $orderId]);
+                database()->prepare('INSERT INTO order_status_history (order_id, status) VALUES (:id, :status)')->execute(['id' => $orderId, 'status' => 'cancelled']);
                 database()->prepare('UPDATE menus SET stock = stock + 1 WHERE id = :id')->execute(['id' => $order['menu_id']]);
                 database()->commit();
                 header('Location: account.php?cancelled=1'); exit;

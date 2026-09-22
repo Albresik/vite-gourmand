@@ -35,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$order || !in_array($newStatus, $nextStatuses[$order['status']] ?? [], true)) {
         $error = 'Ce changement de statut n’est pas autorisé.';
-    } elseif ($newStatus === 'cancelled' && (!in_array($contactMethod, ['phone', 'email'], true) || $reason === '')) {
-        $error = 'Pour annuler, indique le moyen de contact du client et le motif.';
+    } elseif ($newStatus === 'cancelled' && (!isset($_POST['contacted']) || !in_array($contactMethod, ['phone', 'email'], true) || $reason === '')) {
+        $error = 'Pour annuler, contacte le client puis indique le moyen utilisé et le motif.';
     } else {
         try {
             database()->beginTransaction();
@@ -53,6 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             if ($newStatus === 'cancelled') {
                 database()->prepare('UPDATE menus SET stock = stock + 1 WHERE id = :id')->execute(['id' => $order['menu_id']]);
+                $contactLog = database()->prepare('INSERT INTO order_contact_logs (order_id, employee_id, contact_method, note) VALUES (:order_id, :employee_id, :method, :note)');
+                $contactLog->execute(['order_id' => $orderId, 'employee_id' => currentUser()['id'], 'method' => $contactMethod, 'note' => $reason]);
             }
             $history = database()->prepare('INSERT INTO order_status_history (order_id, status) VALUES (:order_id, :status)');
             $history->execute(['order_id' => $orderId, 'status' => $newStatus]);
@@ -88,6 +90,8 @@ pageHeader($spaceTitle);
   <nav class="mb-4 d-flex flex-wrap gap-2" aria-label="Gestion"><a class="btn btn-outline-dark" href="employee-menus.php">Gérer les menus</a><a class="btn btn-outline-dark" href="employee-dishes.php">Gérer les plats</a><a class="btn btn-outline-dark" href="employee-reviews.php">Valider les avis</a><a class="btn btn-outline-dark" href="employee-hours.php">Gérer les horaires</a></nav>
 
   <?php if (isset($_GET['updated'])): ?><div class="alert alert-success" role="status">Statut mis à jour.</div><?php endif; ?>
+  <?php if (isset($_GET['edited'])): ?><div class="alert alert-success" role="status">Commande modifiée et contact client enregistré.</div><?php endif; ?>
+  <?php if (isset($_GET['edit_denied'])): ?><div class="alert alert-warning" role="alert">Cette commande n’est plus modifiable.</div><?php endif; ?>
   <?php if ($error): ?><div class="alert alert-danger" role="alert"><?= htmlspecialchars($error) ?></div><?php endif; ?>
 
   <h2 class="h4">Commandes</h2>
@@ -104,6 +108,7 @@ pageHeader($spaceTitle);
     <p class="mb-1"><?= htmlspecialchars($order['first_name'] . ' ' . $order['last_name']) ?> · <?= htmlspecialchars($order['email']) ?> · <?= htmlspecialchars($order['phone']) ?></p>
     <p class="mb-1"><?= (int)$order['quantity'] ?> personnes · <?= htmlspecialchars($order['delivery_date']) ?> à <?= htmlspecialchars(substr($order['delivery_time'], 0, 5)) ?></p>
     <p><span class="badge text-bg-secondary"><?= $statuses[$order['status']] ?></span></p>
+    <?php if (in_array($order['status'], ['pending', 'accepted'], true)): ?><p><a class="btn btn-sm btn-outline-dark" href="employee-edit-order.php?id=<?= (int)$order['id'] ?>">Modifier après contact client</a></p><?php endif; ?>
     <?php if ($nextStatuses[$order['status']]): ?>
     <form method="post" class="row g-2 align-items-end">
       <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
@@ -112,6 +117,7 @@ pageHeader($spaceTitle);
       <div class="col-md-3"><label class="form-label" for="method-<?= (int)$order['id'] ?>">Contact pour annulation</label><select class="form-select" name="contact_method" id="method-<?= (int)$order['id'] ?>"><option value="">Sans objet</option><option value="phone">Téléphone</option><option value="email">E-mail</option></select></div>
       <div class="col-md-4"><label class="form-label" for="reason-<?= (int)$order['id'] ?>">Motif d’annulation</label><input class="form-control" name="reason" id="reason-<?= (int)$order['id'] ?>" maxlength="500"></div>
       <div class="col-md-2"><button class="btn btn-primary" type="submit">Mettre à jour</button></div>
+      <div class="col-12"><label><input type="checkbox" name="contacted" value="1"> J’ai contacté le client (obligatoire uniquement pour annuler).</label></div>
     </form>
     <p class="form-text mb-0">Avant une annulation, contactez le client puis indiquez le moyen utilisé et le motif.</p>
     <?php endif; ?>

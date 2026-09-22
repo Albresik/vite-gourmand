@@ -11,8 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($password !== $confirm) $errors[] = 'Les mots de passe ne correspondent pas.';
     if (!$errors) {
         try {
-            $statement = database()->prepare('INSERT INTO users (first_name, last_name, email, phone, address, password_hash, role) VALUES (:first_name, :last_name, :email, :phone, :address, :password_hash, "user")');
-            $statement->execute([...$data, 'password_hash' => password_hash($password, PASSWORD_DEFAULT)]);
+            $statement = database()->prepare('INSERT INTO users (first_name, last_name, email, phone, address, password_hash, role) VALUES (:first_name, :last_name, :email, :phone, :address, :password_hash, :role)');
+            $statement->execute([...$data, 'password_hash' => password_hash($password, PASSWORD_DEFAULT), 'role' => 'user']);
             header('Location: login.php?registered=1'); exit;
         } catch (PDOException $exception) { $errors[] = $exception->getCode() === '23000' ? 'Cette adresse e-mail est déjà utilisée.' : 'Une erreur est survenue. Réessaie plus tard.'; }
     }

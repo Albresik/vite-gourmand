@@ -13,6 +13,8 @@ erDiagram
     allergens ||--o{ dish_allergens : concerne
     menus ||--o{ menu_images : illustre
     customer_orders ||--o| reviews : donne_lieu_a
+    customer_orders ||--o{ order_contact_logs : contacts
+    users ||--o{ order_contact_logs : employe
 
     users {
         int id PK
@@ -72,6 +74,14 @@ erDiagram
         time closing_time
         boolean is_closed
     }
+    order_contact_logs {
+        int id PK
+        int order_id FK
+        int employee_id FK
+        enum contact_method
+        varchar note
+        timestamp created_at
+    }
     customer_orders {
         int id PK
         int user_id FK
@@ -108,6 +118,7 @@ erDiagram
 - Un menu peut avoir plusieurs images. La première est l’image principale.
 - Une commande terminée peut recevoir au plus un avis. Son statut `pending`, `approved` ou `rejected` décide de sa visibilité publique.
 - `opening_hours` contient sept lignes indépendantes, une par jour de la semaine.
+- Chaque modification ou annulation faite par l’équipe conserve une trace du contact client dans `order_contact_logs`.
 - Une commande peut avoir plusieurs lignes d’historique ; chaque ligne correspond à un changement de statut.
 - Un message de contact peut être envoyé sans compte. Il n’a donc pas de lien obligatoire avec `users`.
 
