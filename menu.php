@@ -16,15 +16,15 @@ if (!$menu) {
 }
 
 $request = database()->prepare(
-    'SELECT d.id, d.name, d.description, d.course,
-            GROUP_CONCAT(a.name ORDER BY a.name SEPARATOR ", ") AS allergen_names
+    "SELECT d.id, d.name, d.description, d.course,
+            GROUP_CONCAT(a.name ORDER BY a.name SEPARATOR ', ') AS allergen_names
      FROM dishes d
      JOIN menu_dishes md ON md.dish_id = d.id
      LEFT JOIN dish_allergens da ON da.dish_id = d.id
      LEFT JOIN allergens a ON a.id = da.allergen_id
      WHERE md.menu_id = :menu_id
      GROUP BY d.id, d.name, d.description, d.course
-     ORDER BY FIELD(d.course, "Entrée", "Plat", "Dessert"), d.name'
+     ORDER BY FIELD(d.course, 'Entrée', 'Plat', 'Dessert'), d.name"
 );
 $request->execute(['menu_id' => $id]);
 $dishes = $request->fetchAll();
