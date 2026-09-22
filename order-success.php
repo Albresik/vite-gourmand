@@ -1,0 +1,5 @@
+<?php
+require_once __DIR__ . '/includes/database.php'; require_once __DIR__ . '/includes/layout.php'; requireLogin();
+$query = database()->prepare('SELECT customer_orders.*, menus.title FROM customer_orders JOIN menus ON menus.id = customer_orders.menu_id WHERE customer_orders.id = :id AND customer_orders.user_id = :user_id'); $query->execute(['id'=>filter_input(INPUT_GET,'id',FILTER_VALIDATE_INT), 'user_id'=>currentUser()['id']]); $order = $query->fetch();
+if (!$order) { header('Location: account.php'); exit; } pageHeader('Commande confirmée'); ?>
+<main id="contenu" class="container py-5"><div class="auth-card mx-auto text-center"><p class="eyebrow">Commande enregistrée</p><h1 class="h2">Merci pour votre commande !</h1><p>La commande n°<?= (int)$order['id'] ?> pour le <?= htmlspecialchars($order['title']) ?> a bien été transmise à notre équipe.</p><p class="fs-4 fw-bold"><?= number_format($order['total_amount'], 2, ',', ' ') ?> €</p><a class="btn btn-primary" href="account.php">Voir mon espace</a></div></main><?php pageFooter(); ?>
