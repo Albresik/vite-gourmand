@@ -2,6 +2,8 @@
 require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/layout.php';
 requireLogin(); $user = currentUser();
+if ($user['role'] === 'admin') { header('Location: admin.php'); exit; }
+if ($user['role'] === 'employee') { header('Location: employee.php'); exit; }
 $orders = database()->prepare('SELECT customer_orders.*, menus.title FROM customer_orders JOIN menus ON menus.id = customer_orders.menu_id WHERE customer_orders.user_id = :user_id ORDER BY customer_orders.created_at DESC');
 $orders->execute(['user_id' => $user['id']]); $orders = $orders->fetchAll();
 pageHeader('Mon espace'); ?>

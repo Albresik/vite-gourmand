@@ -6,7 +6,8 @@ Cette checklist décrit le périmètre minimal à livrer. Les éléments marqué
 
 - [x] Accueil : présentation, équipe et avis visibles.
 - [x] Navigation : accueil, menus, connexion et contact (lien à créer).
-- [x] Pied de page : horaires, mentions légales et CGV (pages à créer).
+- [x] Pied de page : horaires et liens vers les pages mentions légales et CGV.
+- [ ] Compléter les informations légales réelles avant toute exploitation commerciale.
 - [x] Catalogue de menus avec filtres dynamiques : prix, thème, régime et nombre de personnes.
 - [x] Détail d’un menu et bouton de commande.
 - [x] Création de compte avec validation du mot de passe.
@@ -27,10 +28,10 @@ Cette checklist décrit le périmètre minimal à livrer. Les éléments marqué
 
 ## Espaces employé et administrateur
 
-- [ ] Contrôle des rôles utilisateur / employé / administrateur.
-- [ ] Employé : gestion simple des menus et des commandes.
+- [ ] Contrôle des rôles utilisateur / employé / administrateur (codé, test à faire).
+- [ ] Employé : gestion simple des menus et des commandes (codée, test à faire).
 - [ ] Employé : validation/refus des avis.
-- [ ] Administrateur : création et désactivation d’un compte employé.
+- [ ] Administrateur : création et désactivation d’un compte employé (codées, test à faire).
 - [ ] Administrateur : tableau de bord et chiffre d’affaires filtrable.
 
 ## Données, sécurité et accessibilité
@@ -51,4 +52,4 @@ Cette checklist décrit le périmètre minimal à livrer. Les éléments marqué
 - [ ] Charte graphique et police utilisées.
 - [ ] Guide utilisateur avec comptes de démonstration.
 - [ ] Documentation de gestion de projet.
-- [ ] Documentation technique : choix, environnement, MCD, diagrammes et déploiement.
+- [ ] Documentation technique : choix, environnement, MCD, diagrammes et déploiement (schéma relationnel commencé).

@@ -14,6 +14,8 @@ Puis importer `database/upgrade_orders.sql` pour enregistrer les commandes et le
 
 Importer `database/upgrade_contact.sql` pour activer le formulaire de contact.
 
+Importer `database/upgrade_employee.sql` pour ajouter les informations d’annulation. Pour créer le premier administrateur, lancer en local `C:\xampp\php\php.exe scripts\create_admin.php` depuis le dossier du projet. Aucun administrateur ne peut être créé depuis le site public.
+
 ## Compétences mises en œuvre
 
 - Catalogue de menus alimenté par MySQL.
