@@ -11,6 +11,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends libssl-dev pkg-
     && sed -i 's/<VirtualHost \*:80>/<VirtualHost *:10000>/' /etc/apache2/sites-available/000-default.conf \
     && rm -rf /var/lib/apt/lists/*
 
+# En ligne, les erreurs restent dans les journaux du serveur, pas sur les pages publiques.
+RUN printf 'display_errors=Off\nlog_errors=On\n' > /usr/local/etc/php/conf.d/production-errors.ini
+
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 COPY composer.json composer.lock ./
