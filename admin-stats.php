@@ -48,7 +48,7 @@ if (!$error) {
     }
 }
 
-$maxCount = max(1, ...array_column($stats, 'count'));
+$maxCount = max([1, ...array_column($stats, 'count')]);
 pageHeader('Statistiques');
 ?>
 <main id="contenu" class="container py-5">
