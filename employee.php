@@ -2,6 +2,8 @@
 require_once __DIR__ . '/includes/database.php';
 require_once __DIR__ . '/includes/layout.php';
 requireRole(['employee', 'admin']);
+$isAdmin = currentUser()['role'] === 'admin';
+$spaceTitle = $isAdmin ? 'Espace administrateur — gestion des commandes' : 'Espace employé';
 
 $statuses = [
     'pending' => 'En attente', 'accepted' => 'Acceptée',
@@ -27,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $contactMethod = $_POST['contact_method'] ?? '';
     $reason = trim($_POST['reason'] ?? '');
 
-    $request = database()->prepare('SELECT status FROM customer_orders WHERE id = :id');
+    $request = database()->prepare('SELECT status, menu_id FROM customer_orders WHERE id = :id');
     $request->execute(['id' => $orderId]);
     $order = $request->fetch();
 
@@ -49,12 +51,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($update->rowCount() !== 1) {
                 throw new RuntimeException('Commande modifiée entre-temps.');
             }
+            if ($newStatus === 'cancelled') {
+                database()->prepare('UPDATE menus SET stock = stock + 1 WHERE id = :id')->execute(['id' => $order['menu_id']]);
+            }
             $history = database()->prepare('INSERT INTO order_status_history (order_id, status) VALUES (:order_id, :status)');
             $history->execute(['order_id' => $orderId, 'status' => $newStatus]);
             database()->commit();
             header('Location: employee.php?updated=1'); exit;
         } catch (Throwable $exception) {
-            database()->rollBack();
+            if (database()->inTransaction()) database()->rollBack();
             $error = 'Le statut n’a pas pu être modifié.';
         }
     }
@@ -74,12 +79,13 @@ $request = database()->prepare($sql);
 $request->execute($params);
 $orders = $request->fetchAll();
 
-pageHeader('Espace employé');
+pageHeader($spaceTitle);
 ?>
 <main id="contenu" class="container py-5">
   <p class="eyebrow">Gestion</p>
-  <h1 class="h2">Espace employé</h1>
-  <nav class="mb-4" aria-label="Gestion"><a class="btn btn-outline-dark" href="employee-menus.php">Gérer les menus</a></nav>
+  <h1 class="h2"><?= $spaceTitle ?></h1>
+  <?php if ($isAdmin): ?><p><a href="admin.php">← Retour à l’administration</a></p><?php endif; ?>
+  <nav class="mb-4 d-flex flex-wrap gap-2" aria-label="Gestion"><a class="btn btn-outline-dark" href="employee-menus.php">Gérer les menus</a><a class="btn btn-outline-dark" href="employee-dishes.php">Gérer les plats</a><a class="btn btn-outline-dark" href="employee-reviews.php">Valider les avis</a><a class="btn btn-outline-dark" href="employee-hours.php">Gérer les horaires</a></nav>
 
   <?php if (isset($_GET['updated'])): ?><div class="alert alert-success" role="status">Statut mis à jour.</div><?php endif; ?>
   <?php if ($error): ?><div class="alert alert-danger" role="alert"><?= htmlspecialchars($error) ?></div><?php endif; ?>

@@ -4,12 +4,12 @@ Cette checklist décrit le périmètre minimal à livrer. Les éléments marqué
 
 ## Application publique
 
-- [x] Accueil : présentation, équipe et avis visibles.
-- [x] Navigation : accueil, menus, connexion et contact (lien à créer).
-- [x] Pied de page : horaires et liens vers les pages mentions légales et CGV.
+- [x] Accueil : présentation, équipe et affichage des avis approuvés (aucun faux avis de démonstration).
+- [x] Navigation : accueil, menus, connexion et contact.
+- [x] Pied de page : horaires du lundi au dimanche et liens vers mentions légales et CGV.
 - [ ] Compléter les informations légales réelles avant toute exploitation commerciale.
 - [x] Catalogue de menus avec filtres dynamiques : prix, thème, régime et nombre de personnes.
-- [x] Détail d’un menu et bouton de commande.
+- [x] Détail d’un menu (plats, allergènes, images, conditions) et bouton de commande.
 - [x] Création de compte avec validation du mot de passe.
 - [x] Connexion avec mots de passe hachés.
 - [ ] Réinitialisation du mot de passe.
@@ -21,22 +21,24 @@ Cette checklist décrit le périmètre minimal à livrer. Les éléments marqué
 - [x] Formulaire de commande et informations de livraison.
 - [x] Règles de prix : minimum, livraison et remise.
 - [x] Enregistrement de la commande et statut initial.
-- [x] Espace utilisateur : liste simple des commandes.
-- [ ] Annulation ou modification avant acceptation.
-- [ ] Historique détaillé des statuts.
-- [ ] Avis client possible sur une commande terminée.
+- [x] Espace utilisateur : liste et suivi des commandes.
+- [x] Annulation avant acceptation et historique des statuts (testés dans le navigateur).
+- [ ] Modification avant acceptation, sans changer le menu (codée, test manuel à faire).
+- [ ] Modification du profil (codée, test manuel à faire).
+- [ ] Avis client sur commande terminée (codé, test manuel à faire).
 
 ## Espaces employé et administrateur
 
 - [ ] Contrôle des rôles utilisateur / employé / administrateur (codé, test à faire).
-- [ ] Employé : gestion simple des menus et des commandes (codée, test à faire).
-- [ ] Employé : validation/refus des avis.
+- [ ] Employé : gestion des menus, plats, images et commandes (codée, tests manuels à faire).
+- [ ] Employé : validation/refus des avis (codés, test manuel à faire).
+- [ ] Employé : modification des horaires (codée, test manuel à faire).
 - [ ] Administrateur : création et désactivation d’un compte employé (codées, test à faire).
 - [ ] Administrateur : tableau de bord et chiffre d’affaires filtrable.
 
 ## Données, sécurité et accessibilité
 
-- [x] MySQL : utilisateurs, menus, commandes et historique des statuts.
+- [x] MySQL : utilisateurs, menus, plats, allergènes, images, commandes et historique des statuts.
 - [ ] MongoDB : événements/statistiques de commande.
 - [x] PDO et requêtes préparées.
 - [x] Hachage des mots de passe et sessions.
