@@ -1,12 +1,18 @@
 # Schéma relationnel — version actuelle
 
-Ce schéma représente les tables réellement créées par les fichiers SQL du projet. Il sera complété quand la gestion des plats, des allergènes et des avis sera ajoutée.
+Ce schéma représente les tables créées par les fichiers SQL du projet.
 
 ```mermaid
 erDiagram
     users ||--o{ customer_orders : passe
     menus ||--o{ customer_orders : concerne
     customer_orders ||--o{ order_status_history : possede
+    menus ||--o{ menu_dishes : contient
+    dishes ||--o{ menu_dishes : apparait_dans
+    dishes ||--o{ dish_allergens : declare
+    allergens ||--o{ dish_allergens : concerne
+    menus ||--o{ menu_images : illustre
+    customer_orders ||--o| reviews : donne_lieu_a
 
     users {
         int id PK
@@ -26,6 +32,45 @@ erDiagram
         int min_people
         decimal price
         int stock
+        varchar conditions
+        int lead_days
+    }
+    dishes {
+        int id PK
+        varchar name
+        varchar description
+        enum course
+    }
+    menu_dishes {
+        int menu_id PK, FK
+        int dish_id PK, FK
+    }
+    allergens {
+        int id PK
+        varchar name UK
+    }
+    dish_allergens {
+        int dish_id PK, FK
+        int allergen_id PK, FK
+    }
+    menu_images {
+        int id PK
+        int menu_id FK
+        varchar image_url
+        varchar alt_text
+    }
+    reviews {
+        int id PK
+        int order_id FK, UK
+        int rating
+        varchar comment
+        enum status
+    }
+    opening_hours {
+        int day_of_week PK
+        time opening_time
+        time closing_time
+        boolean is_closed
     }
     customer_orders {
         int id PK
@@ -58,6 +103,11 @@ erDiagram
 
 - Un utilisateur peut passer plusieurs commandes ; une commande appartient à un seul utilisateur.
 - Un menu peut apparaître dans plusieurs commandes ; une commande concerne un seul menu.
+- Un menu comporte plusieurs plats, et un plat peut figurer dans plusieurs menus : `menu_dishes` est la table de liaison.
+- Un plat peut déclarer plusieurs allergènes, et un allergène peut concerner plusieurs plats : `dish_allergens` est la seconde table de liaison.
+- Un menu peut avoir plusieurs images. La première est l’image principale.
+- Une commande terminée peut recevoir au plus un avis. Son statut `pending`, `approved` ou `rejected` décide de sa visibilité publique.
+- `opening_hours` contient sept lignes indépendantes, une par jour de la semaine.
 - Une commande peut avoir plusieurs lignes d’historique ; chaque ligne correspond à un changement de statut.
 - Un message de contact peut être envoyé sans compte. Il n’a donc pas de lien obligatoire avec `users`.
 

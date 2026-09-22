@@ -9,7 +9,7 @@ $errors = [];
 $menu = [
     'id' => '', 'title' => '', 'description' => '', 'theme' => 'Classique',
     'diet' => 'Classique', 'min_people' => 4, 'price' => '', 'stock' => 0,
-    'image_url' => '',
+    'image_url' => '', 'conditions' => '', 'lead_days' => 3,
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -29,7 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($menu['title'] === '' || $menu['description'] === '' || $menu['image_url'] === '') $errors[] = 'Titre, description et image sont obligatoires.';
     if (!in_array($menu['theme'], $themes, true) || !in_array($menu['diet'], $diets, true)) $errors[] = 'Thème ou régime invalide.';
     if ((int)$menu['min_people'] < 1 || (float)$menu['price'] <= 0 || (int)$menu['stock'] < 0) $errors[] = 'Vérifie le nombre de personnes, le prix et le stock.';
-    if (!filter_var($menu['image_url'], FILTER_VALIDATE_URL)) $errors[] = 'L’URL de l’image est invalide.';
+    if ((int)$menu['lead_days'] < 0 || (int)$menu['lead_days'] > 365 || $menu['conditions'] === '') $errors[] = 'Indique les conditions et un délai de commande valable.';
+    if (!filter_var($menu['image_url'], FILTER_VALIDATE_URL) || !in_array(parse_url($menu['image_url'], PHP_URL_SCHEME), ['http', 'https'], true)) $errors[] = 'L’URL de l’image doit commencer par http ou https.';
 
     if (!$errors) {
         $data = [
@@ -37,16 +38,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'theme' => $menu['theme'], 'diet' => $menu['diet'],
             'min_people' => (int)$menu['min_people'], 'price' => (float)$menu['price'],
             'stock' => (int)$menu['stock'], 'image_url' => $menu['image_url'],
+            'conditions' => $menu['conditions'], 'lead_days' => (int)$menu['lead_days'],
         ];
         if ($id) {
             $data['id'] = $id;
-            $sql = 'UPDATE menus SET title=:title, description=:description, theme=:theme, diet=:diet, min_people=:min_people, price=:price, stock=:stock, image_url=:image_url WHERE id=:id';
+            $sql = 'UPDATE menus SET title=:title, description=:description, theme=:theme, diet=:diet, min_people=:min_people, price=:price, stock=:stock, image_url=:image_url, conditions=:conditions, lead_days=:lead_days WHERE id=:id';
         } else {
-            $sql = 'INSERT INTO menus (title, description, theme, diet, min_people, price, stock, image_url) VALUES (:title, :description, :theme, :diet, :min_people, :price, :stock, :image_url)';
+            $sql = 'INSERT INTO menus (title, description, theme, diet, min_people, price, stock, image_url, conditions, lead_days) VALUES (:title, :description, :theme, :diet, :min_people, :price, :stock, :image_url, :conditions, :lead_days)';
         }
-        $request = database()->prepare($sql);
-        $request->execute($data);
-        header('Location: employee-menus.php?saved=1'); exit;
+        database()->beginTransaction();
+        try {
+            $request = database()->prepare($sql);
+            $request->execute($data);
+            $savedId = $id ?: (int)database()->lastInsertId();
+            $firstImage = database()->prepare('SELECT id FROM menu_images WHERE menu_id = :id ORDER BY id LIMIT 1');
+            $firstImage->execute(['id' => $savedId]);
+            $imageId = $firstImage->fetchColumn();
+            $imageData = ['url' => $menu['image_url'], 'alt' => 'Illustration du ' . $menu['title']];
+            if ($imageId) {
+                $imageData['id'] = $imageId;
+                database()->prepare('UPDATE menu_images SET image_url = :url, alt_text = :alt WHERE id = :id')->execute($imageData);
+            } else {
+                $imageData['menu_id'] = $savedId;
+                database()->prepare('INSERT INTO menu_images (menu_id, image_url, alt_text) VALUES (:menu_id, :url, :alt)')->execute($imageData);
+            }
+            database()->commit();
+        } catch (Throwable $exception) {
+            database()->rollBack();
+            $errors[] = 'Le menu n’a pas pu être enregistré.';
+        }
+        if (!$errors) { header('Location: employee-menus.php?saved=1'); exit; }
     }
 } elseif (isset($_GET['id'])) {
     $request = database()->prepare('SELECT * FROM menus WHERE id = :id');
@@ -83,8 +104,10 @@ pageHeader('Gestion des menus');
             <div class="col-md-4"><label class="form-label" for="stock">Stock</label><input required type="number" min="0" class="form-control" id="stock" name="stock" value="<?= htmlspecialchars((string)$menu['stock']) ?>"></div>
           </div>
           <div class="my-3"><label class="form-label" for="image_url">URL de l’image</label><input required type="url" class="form-control" id="image_url" name="image_url" value="<?= htmlspecialchars($menu['image_url']) ?>"></div>
+          <div class="mb-3"><label class="form-label" for="conditions">Conditions du menu</label><textarea required maxlength="500" class="form-control" id="conditions" name="conditions" rows="2"><?= htmlspecialchars($menu['conditions']) ?></textarea></div>
+          <div class="mb-3"><label class="form-label" for="lead_days">Délai de commande (jours)</label><input required type="number" min="0" max="365" class="form-control" id="lead_days" name="lead_days" value="<?= (int)$menu['lead_days'] ?>"></div>
           <button class="btn btn-primary" type="submit">Enregistrer le menu</button>
-          <?php if ($menu['id']): ?><a class="btn btn-outline-secondary" href="employee-menus.php">Créer un autre menu</a><?php endif; ?>
+          <?php if ($menu['id']): ?><a class="btn btn-outline-secondary" href="employee-menus.php">Créer un autre menu</a> <a class="btn btn-outline-secondary" href="employee-images.php?menu_id=<?= (int)$menu['id'] ?>">Gérer les images</a><?php endif; ?>
         </form>
       </div>
     </section>
