@@ -15,7 +15,7 @@ Ces offres conviennent à une démonstration d'évaluation, pas à un service co
 
 1. Dans **Security > Database & Network Access**, créer un utilisateur propre à l'application avec le rôle `readWrite` limité à la base `vite_gourmand_prod`. Conserver l'utilisateur `atlasAdmin` existant, mais ne pas l'utiliser dans le site.
 2. Plus tard, quand le service Render existe, relever ses plages d'IP sortantes dans **Connect > Outbound** et ajouter uniquement ces plages à la liste d'accès Atlas. Ne pas ouvrir `0.0.0.0/0` par facilité.
-3. Récupérer l'URI via **Connect > Drivers** ; la conserver dans les variables privées de Render sous le nom `MONGODB_URI`. Définir aussi `MONGODB_DB=vite_gourmand_prod`.
+3. Récupérer l'URI via **Connect > Drivers**. Retirer la partie `utilisateur:<db_password>@` pour ne garder que l'adresse du cluster dans `MONGODB_URI`. Définir séparément dans Render `MONGODB_USER`, `MONGODB_PASSWORD` (mot de passe non encodé) et `MONGODB_DB=vite_gourmand_prod`. Ne jamais communiquer ces valeurs.
 
 ## 2. Préparer Aiven
 
@@ -29,7 +29,7 @@ Ces offres conviennent à une démonstration d'évaluation, pas à un service co
 
 1. Pousser la branche principale testée vers le dépôt Git public.
 2. Dans Render, créer **New > Web Service**, sélectionner le dépôt, la branche principale, le langage **Docker** et le plan **Free**. Le `Dockerfile` installe PHP, l'extension MongoDB, Composer et Apache sur le port 10000.
-3. Dans **Environment**, définir `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_SSL_CA=/etc/secrets/ca.pem`, `MONGODB_URI` et `MONGODB_DB=vite_gourmand_prod`.
+3. Dans **Environment**, définir `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_SSL_CA=/etc/secrets/ca.pem`, puis `MONGODB_URI` (sans identifiants), `MONGODB_USER`, `MONGODB_PASSWORD` et `MONGODB_DB=vite_gourmand_prod`.
 4. Ajouter le certificat Aiven comme **Secret File** nommé `ca.pem`, disponible à `/etc/secrets/ca.pem` à l'exécution. Ne pas ajouter le certificat ni les mots de passe au dépôt.
 5. Déployer, puis relever les plages **Connect > Outbound** pour autoriser Render dans Atlas.
 

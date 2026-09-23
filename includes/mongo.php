@@ -7,7 +7,16 @@ function mongoOrdersCollection()
     if (!$uri || !extension_loaded('mongodb')) return null;
 
     require_once __DIR__ . '/../vendor/autoload.php';
-    $client = new MongoDB\Client($uri, ['serverSelectionTimeoutMS' => 3000]);
+    $options = ['serverSelectionTimeoutMS' => 3000];
+    $user = getenv('MONGODB_USER');
+    $password = getenv('MONGODB_PASSWORD');
+    if ($user && $password) {
+        // Séparer les accès de l'URI évite d'encoder les caractères spéciaux du mot de passe.
+        $options['username'] = $user;
+        $options['password'] = $password;
+        $options['authSource'] = 'admin';
+    }
+    $client = new MongoDB\Client($uri, $options);
     $databaseName = getenv('MONGODB_DB') ?: (getenv('DYNO') ? 'vite_gourmand_prod' : 'vite_gourmand_local');
     return $client->selectCollection($databaseName, 'order_stats');
 }
