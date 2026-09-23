@@ -44,7 +44,18 @@ if (!$error) {
             uasort($stats, fn($a, $b) => $b['count'] <=> $a['count']);
         }
     } catch (Throwable $exception) {
-        $error = 'Connexion MongoDB impossible. Vérifie la configuration Atlas et l’accès réseau.';
+        $detail = strtolower($exception->getMessage());
+        if (str_contains($detail, 'authentication failed')) {
+            $error = 'MongoDB refuse l’identifiant ou le mot de passe de l’utilisateur de base de données.';
+        } elseif (str_contains($detail, 'not authorized') || str_contains($detail, 'unauthorized')) {
+            $error = 'L’utilisateur MongoDB n’a pas les droits d’écriture sur la base choisie.';
+        } elseif (str_contains($detail, 'parse') || str_contains($detail, 'invalid uri')) {
+            $error = 'La chaîne de connexion MongoDB est invalide. Vérifie les caractères spéciaux du mot de passe.';
+        } elseif (str_contains($detail, 'server selection') || str_contains($detail, 'timed out') || str_contains($detail, 'dns')) {
+            $error = 'MongoDB est inaccessible depuis Render. Vérifie les adresses IP autorisées dans Atlas.';
+        } else {
+            $error = 'Connexion MongoDB impossible (' . get_class($exception) . ', code ' . $exception->getCode() . ').';
+        }
     }
 }
 
