@@ -1,12 +1,12 @@
-# Déploiement gratuit envisagé — Vite & Gourmand
+# Déploiement gratuit — Vite & Gourmand
 
-**État : préparation locale, pas encore déployé.** Ne jamais publier de mots de passe ou de chaînes de connexion dans Git.
+**État : application déployée et testée sur Render, avec MySQL Aiven et MongoDB Atlas.** La procédure ci-dessous permet de comprendre les étapes suivies. Ne jamais publier de mots de passe ou de chaînes de connexion dans Git.
 
 ## Choix et limites
 
 - **Render Free** : héberge le site PHP depuis le `Dockerfile`. Le site se met en veille après 15 minutes d'inactivité ; le premier chargement peut prendre environ une minute. Le système de fichiers est temporaire.
 - **Aiven MySQL Free** : conserve utilisateurs, menus et commandes. L'offre gratuite annoncée a 1 Go de stockage et peut être mise en veille après une longue inactivité.
-- **MongoDB Atlas Free** : conserve une copie sans données personnelles des commandes pour le graphique administrateur. Le cluster `ViteGourmand` est créé ; ses données d'exemple ne sont pas les commandes du site.
+- **MongoDB Atlas Free** : conserve une copie sans coordonnées personnelles des commandes pour le graphique administrateur. Le cluster `ViteGourmand` contient aussi des données d'exemple, distinctes des commandes du site.
 - L'option **Heroku + JawsDB** n'est pas retenue : JawsDB a un palier gratuit, mais le serveur PHP Heroku nécessite un dyno payant.
 
 Ces offres conviennent à une démonstration d'évaluation, pas à un service commercial. Render limite aussi l'usage mensuel et peut suspendre un service Free en cas de trafic sortant inhabituel. Vérifier les conditions affichées dans chaque compte avant toute activation.
@@ -35,7 +35,7 @@ Ces offres conviennent à une démonstration d'évaluation, pas à un service co
 
 ## 4. Tester le site public
 
-Vérifier la page d'accueil, les menus, l'inscription, la connexion, une commande **fictive**, l'espace employé et les statistiques administrateur. Vérifier aussi la navigation clavier et le mobile. Les e-mails automatiques et les mentions légales réelles restent à finaliser avant toute exploitation commerciale. Ne jamais utiliser de vraies données personnelles pour les essais publics.
+La page d'accueil, les menus, l'inscription, la connexion, des commandes **fictives** et les statistiques administrateur ont été testés en ligne. Le graphique a affiché deux commandes terminées et un total de 1 200,12 €. Le filtre par menu a aussi été testé. Il reste à vérifier les filtres par dates, les autres parcours employé, la navigation clavier et le mobile. Les e-mails automatiques n'ont pas été réalisés. Les mentions légales réelles restent à finaliser avant toute exploitation commerciale. Ne jamais utiliser de vraies données personnelles pour les essais publics.
 
 ## Références officielles
 

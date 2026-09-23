@@ -31,8 +31,21 @@ Importer `database/upgrade_order_contacts.sql` pour conserver la trace du moyen 
 - Requêtes préparées PDO.
 - Structure HTML sémantique et interface responsive Bootstrap.
 - Modèle relationnel avec tables de liaison pour les plats et leurs allergènes (voir `docs/SCHEMA_RELATIONNEL.md`).
-- Tableau de bord administratif préparé pour MongoDB Atlas (l'extension PHP MongoDB et `MONGODB_URI` sont nécessaires pour le tester).
+- Tableau de bord administratif relié à MongoDB Atlas pour les statistiques des commandes.
 
 ## Mise en ligne
 
-Le déploiement gratuit envisagé utilise Render (site PHP), Aiven Free (MySQL) et MongoDB Atlas Free (statistiques). Le `Dockerfile` prépare PHP pour Render ; la procédure et ses limites sont dans `docs/DEPLOIEMENT_GRATUIT.md`. Aucun identifiant ne doit être ajouté au dépôt.
+La démonstration en ligne utilise Render (site PHP), Aiven Free (MySQL) et MongoDB Atlas Free (statistiques). Le `Dockerfile` prépare PHP pour Render ; la procédure et ses limites sont dans `docs/DEPLOIEMENT_GRATUIT.md`. Aucun identifiant ne doit être ajouté au dépôt.
+
+## Documents du projet
+
+- `docs/ECF_CHECKLIST.md` : fonctions validées et travaux restants.
+- `docs/SCHEMA_RELATIONNEL.md` : tables MySQL et leurs relations.
+- `docs/DIAGRAMMES.md` : cas d'utilisation et séquence d'une commande.
+- `docs/CHOIX_TECHNIQUES.md` : explication simple des technologies et de leurs limites.
+- `docs/CHARTE_GRAPHIQUE.md` : couleurs, polices et composants réellement utilisés.
+- `docs/GESTION_PROJET.md` : étapes effectuées, historique Git et travail restant.
+- `docs/GUIDE_UTILISATEUR.md` : parcours visiteur, client, employé et administrateur.
+- [Tableau de suivi GitHub Projects](https://github.com/users/Albresik/projects/1/views/1) : tableau public créé pour le suivi, mais ses cartes ne restent pas visibles après actualisation.
+- [Tickets du dépôt](https://github.com/Albresik/vite-gourmand/issues) : trace consultable des tâches et des tests, utilisée en complément du tableau.
+- `docs/DEPLOIEMENT_GRATUIT.md` : démarche suivie pour la mise en ligne.
