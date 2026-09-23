@@ -65,6 +65,7 @@ pageHeader('Mon espace');
   <?php if (isset($_GET['edited'])): ?><div class="alert alert-success mt-3" role="status">Commande modifiée.</div><?php endif; ?>
   <?php if (isset($_GET['edit_denied'])): ?><div class="alert alert-warning mt-3" role="alert">Cette commande n’est plus modifiable.</div><?php endif; ?>
   <?php if (isset($_GET['profile_saved'])): ?><div class="alert alert-success mt-3" role="status">Profil mis à jour.</div><?php endif; ?>
+  <?php if (isset($_GET['password_saved'])): ?><div class="alert alert-success mt-3" role="status">Mot de passe mis à jour.</div><?php endif; ?>
   <?php if (isset($_GET['review_sent'])): ?><div class="alert alert-success mt-3" role="status">Avis envoyé. Il sera visible après validation.</div><?php endif; ?>
   <?php if (isset($_GET['review_denied'])): ?><div class="alert alert-warning mt-3" role="alert">L’avis n’est pas disponible pour cette commande.</div><?php endif; ?>
   <?php if ($error): ?><div class="alert alert-danger mt-3" role="alert"><?= htmlspecialchars($error) ?></div><?php endif; ?>
@@ -117,6 +118,7 @@ pageHeader('Mon espace');
         <dt>Adresse</dt><dd><?= htmlspecialchars($profile['address']) ?></dd>
       </dl>
       <a class="btn btn-sm btn-outline-dark mt-2" href="profile.php">Modifier mes informations</a>
+      <a class="btn btn-sm btn-outline-dark mt-2" href="change-password.php">Changer mon mot de passe</a>
     </div></aside>
   </div>
 </main>
